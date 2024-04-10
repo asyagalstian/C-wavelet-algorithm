@@ -1,0 +1,21 @@
+<Window x:Class="WaveletAlgorithmPathfinding.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Wavelet Algorithm Pathfinding" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="5">
+            <Button x:Name="AddObstacleButton" Content="Add Obstacle" Click="AddObstacleButton_Click"/>
+            <Button x:Name="SetStartPointButton" Content="Set Start Point" Click="SetStartPointButton_Click"/>
+            <Button x:Name="SetEndPointButton" Content="Set End Point" Click="SetEndPointButton_Click"/>
+            <Button x:Name="FindShortestPathButton" Content="Find Shortest Path" Click="FindShortestPathButton_Click"/>
+        </StackPanel>
+
+        <Canvas x:Name="CanvasGrid" Grid.Row="1" Background="White" MouseLeftButtonDown="CanvasGrid_MouseLeftButtonDown"/>
+
+    </Grid>
+</Window>

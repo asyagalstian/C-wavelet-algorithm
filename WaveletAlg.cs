@@ -1,52 +1,112 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
-private List<Point> AStar(Point start, Point goal)
+namespace WaveletAlgorithmPathfinding
 {
-    var openList = new List<Point>();
-    var closedList = new List<Point>();
-    var cameFrom = new Dictionary<Point, Point>();
-    var gScore = new Dictionary<Point, double>();
-    var fScore = new Dictionary<Point, double>();
-
-    openList.Add(start);
-    gScore[start] = 0;
-    fScore[start] = Heuristic(start, goal);
-
-    while (openList.Any())
+    public partial class MainWindow : Window
     {
-        var current = openList.OrderBy(p => fScore.ContainsKey(p) ? fScore[p] : double.MaxValue).First();
+        private const int gridSize = 10; // Change grid size as needed
+        private const int cellSize = 40; // Change cell size as needed
+        private Point startPoint;
+        private Point endPoint;
+        private List<Point> obstacles = new List<Point>();
 
-        if (current == goal)
+        public MainWindow()
         {
-            return ReconstructPath(cameFrom, current);
+            InitializeComponent();
+            DrawGrid();
         }
 
-        openList.Remove(current);
-        closedList.Add(current);
-
-        foreach (var neighbor in GetNeighbors(current))
+        private void DrawGrid()
         {
-            if (closedList.Contains(neighbor))
+            for (int x = 0; x < gridSize; x++)
             {
-                continue;
-            }
-
-            var tentativeGScore = (gScore.ContainsKey(current) ? gScore[current] : double.MaxValue) + 1;
-
-            if (!openList.Contains(neighbor) || tentativeGScore < (gScore.ContainsKey(neighbor) ? gScore[neighbor] : double.MaxValue))
-            {
-                cameFrom[neighbor] = current;
-                gScore[neighbor] = tentativeGScore;
-                fScore[neighbor] = tentativeGScore + Heuristic(neighbor, goal);
-
-                if (!openList.Contains(neighbor))
+                for (int y = 0; y < gridSize; y++)
                 {
-                    openList.Add(neighbor);
+                    Rectangle rect = new Rectangle
+                    {
+                        Width = cellSize,
+                        Height = cellSize,
+                        Stroke = Brushes.LightGray,
+                        StrokeThickness = 1,
+                        Fill = Brushes.White
+                    };
+
+                    Canvas.SetLeft(rect, x * cellSize);
+                    Canvas.SetTop(rect, y * cellSize);
+                    CanvasGrid.Children.Add(rect);
                 }
             }
         }
-    }
 
-    return null; // No path found 
+        private void AddObstacleButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Add obstacle to the list
+            obstacles.Add(Mouse.GetPosition(CanvasGrid));
+
+            // Draw obstacle on the canvas
+            DrawObstacle(Mouse.GetPosition(CanvasGrid));
+        }
+
+        private void DrawObstacle(Point position)
+        {
+            Ellipse obstacle = new Ellipse
+            {
+                Width = cellSize,
+                Height = cellSize,
+                Fill = Brushes.Red
+            };
+
+            Canvas.SetLeft(obstacle, (int)position.X / cellSize * cellSize);
+            Canvas.SetTop(obstacle, (int)position.Y / cellSize * cellSize);
+
+            CanvasGrid.Children.Add(obstacle);
+        }
+
+        private void SetStartPointButton_Click(object sender, RoutedEventArgs e)
+        {
+            startPoint = Mouse.GetPosition(CanvasGrid);
+            DrawPoint(startPoint, Brushes.Green);
+        }
+
+        private void SetEndPointButton_Click(object sender, RoutedEventArgs e)
+        {
+            endPoint = Mouse.GetPosition(CanvasGrid);
+            DrawPoint(endPoint, Brushes.Blue);
+        }
+
+        private void DrawPoint(Point point, SolidColorBrush color)
+        {
+            Ellipse ellipse = new Ellipse
+            {
+                Width = cellSize,
+                Height = cellSize,
+                Fill = color
+            };
+
+            Canvas.SetLeft(ellipse, (int)point.X / cellSize * cellSize);
+            Canvas.SetTop(ellipse, (int)point.Y / cellSize * cellSize);
+
+            CanvasGrid.Children.Add(ellipse);
+        }
+
+        private void FindShortestPathButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Implement wavelet algorithm to find the shortest path
+        }
+
+        private void CanvasGrid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            Point clickedPoint = e.GetPosition(CanvasGrid);
+            int gridX = (int)clickedPoint.X / cellSize;
+            int gridY = (int)clickedPoint.Y / cellSize;
+            Point closestGridPoint = new Point(gridX * cellSize, gridY * cellSize);
+            DrawObstacle(closestGridPoint);
+            obstacles.Add(closestGridPoint);
+        }
+    }
 }

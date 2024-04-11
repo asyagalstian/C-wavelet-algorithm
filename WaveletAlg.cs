@@ -10,8 +10,8 @@ namespace WaveletAlgorithmPathfinding
 {
     public partial class MainWindow : Window
     {
-        private const int gridSize = 10; // Change grid size as needed
-        private const int cellSize = 40; // Change cell size as needed
+        private const int gridSize = 10; 
+        private const int cellSize = 40; 
         private Point startPoint;
         private Point endPoint;
         private List<Point> obstacles = new List<Point>();
@@ -46,10 +46,8 @@ namespace WaveletAlgorithmPathfinding
 
         private void AddObstacleButton_Click(object sender, RoutedEventArgs e)
         {
-            // Add obstacle to the list
+            
             obstacles.Add(Mouse.GetPosition(CanvasGrid));
-
-            // Draw obstacle on the canvas
             DrawObstacle(Mouse.GetPosition(CanvasGrid));
         }
 
@@ -97,22 +95,21 @@ namespace WaveletAlgorithmPathfinding
 
         private void FindShortestPathButton_Click(object sender, RoutedEventArgs e)
         {
-            // Initialize a grid to keep track of wavefront values
+            
             int[,] waveGrid = new int[gridSize, gridSize];
             for (int x = 0; x < gridSize; x++)
             {
                 for (int y = 0; y < gridSize; y++)
                 {
-                    waveGrid[x, y] = int.MaxValue; // Initialize all cells with a high value
+                    waveGrid[x, y] = int.MaxValue; 
                 }
             }
 
-            // Initialize queue for wavefront expansion
             Queue<Point> wavefront = new Queue<Point>();
             wavefront.Enqueue(startPoint);
             waveGrid[(int)startPoint.X / cellSize, (int)startPoint.Y / cellSize] = 0; // Set start point wave value to 0
 
-            // Wave propagation
+           
             while (wavefront.Count > 0)
             {
                 Point currentPoint = wavefront.Dequeue();
@@ -125,13 +122,13 @@ namespace WaveletAlgorithmPathfinding
                         int newX = (int)currentPoint.X / cellSize + dx;
                         int newY = (int)currentPoint.Y / cellSize + dy;
 
-                        // Check if the neighbor is within grid bounds
+                       
                         if (newX >= 0 && newX < gridSize && newY >= 0 && newY < gridSize)
                         {
-                            // Check if the neighbor is not an obstacle and hasn't been visited yet
+                            
                             if (!obstacles.Contains(new Point(newX * cellSize, newY * cellSize)) && waveGrid[newX, newY] == int.MaxValue)
                             {
-                                // Update wave value and add neighbor to the wavefront
+                           
                                 waveGrid[newX, newY] = waveGrid[(int)currentPoint.X / cellSize, (int)currentPoint.Y / cellSize] + 1;
                                 wavefront.Enqueue(new Point(newX * cellSize, newY * cellSize));
                             }
@@ -140,7 +137,7 @@ namespace WaveletAlgorithmPathfinding
                 }
             }
 
-            // Backtracking
+          
             List<Point> shortestPath = new List<Point>();
             Point current = endPoint;
             shortestPath.Add(current);
@@ -169,7 +166,7 @@ namespace WaveletAlgorithmPathfinding
                 shortestPath.Add(current);
             }
 
-            // Visualize the shortest path
+            
             DrawShortestPath(shortestPath);
         }
 
